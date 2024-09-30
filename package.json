@@ -1,0 +1,21 @@
+{
+    "name": "fnaf-discord",
+    "module": "index.ts",
+    "type": "module",
+    "scripts": {
+        "start": "bun src/index.ts",
+        "dev": "bun --watch src/index.ts"
+    },
+    "dependencies": {
+        "@types/lodash": "^4.17.7",
+        "discopic": "../discopic",
+        "discord.js": "^14.16.1",
+        "lodash": "^4.17.21"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5.6.2"
+    }
+}
