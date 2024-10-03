@@ -12,6 +12,7 @@ import {
 } from "discord.js";
 import { preloadImages, getImageLink } from "../image-cache";
 import { MAX_POWER, NIGHT_DURATION } from "../logic";
+import { logMap, logState } from "../debug";
 
 type MessageActionRow = ActionRowBuilder<MessageActionRowComponentBuilder>;
 type UpdateCallback = (
@@ -52,7 +53,7 @@ export const runGame = async (
   isPrivate: boolean = false,
 ) => {
   let lastUpdate = Date.now();
-  const TIME_BETWEEN_UPDATES = 1500;
+  let maxTimeBetweenUpdates = 5000;
   let hasReachedPowerout = false;
 
   const update = async (
@@ -60,27 +61,19 @@ export const runGame = async (
     input: GameplayInput = undefined,
   ) => {
     state = tick(state, input);
-
-    const msSinceUpdate = Date.now() - lastUpdate;
     lastUpdate = Date.now();
-
-    const secondsSinceUpdate = msSinceUpdate / 1000;
-    const ticks = Math.round(secondsSinceUpdate * TICKS_PER_SECOND) - 1;
-    range(ticks).map(() => (state = tick(state, undefined)));
-
     const image = render(state);
+    lastImage = image;
     const imageLink = getImageLink(image);
 
     if (state.type === "jumpscare" || state.type === "victory") {
       await interaction.editReply({ content: imageLink, components: [] });
-      clearInterval(interval);
       return;
     }
 
     if (state.type === "powerout") {
       if (!hasReachedPowerout) {
-        clearInterval(interval);
-        interval = setInterval(intervalCallback, 500);
+        maxTimeBetweenUpdates = 500;
         hasReachedPowerout = true;
       }
 
@@ -114,28 +107,36 @@ export const runGame = async (
   await interaction.reply({ content: "Loading...", ephemeral: isPrivate });
   await preloadImages(interaction.client);
 
-  const intervalCallback = async () => {
+  let lastImage = render(state);
+  const checkForRender = async () => {
     const msSinceUpdate = Date.now() - lastUpdate;
 
     let currentImage = render(state);
 
-    let newState = state;
-    const secondsSinceUpdate = msSinceUpdate / 1000;
-    const ticks = Math.round(secondsSinceUpdate * TICKS_PER_SECOND) - 1;
-    range(ticks).map(() => (newState = tick(newState, undefined)));
-
-    let nextImage = render(newState);
-    if (currentImage === nextImage && msSinceUpdate < TIME_BETWEEN_UPDATES) return;
+    if (currentImage === lastImage && msSinceUpdate < maxTimeBetweenUpdates) return;
 
     try {
       await update();
     } catch {
-      clearInterval(interval);
+      clearInterval(renderInterval);
+    }
+
+    if (state.type === "victory" || state.type === "jumpscare") {
+      clearInterval(renderInterval);
     }
   };
 
   await update();
-  let interval = setInterval(intervalCallback, TIME_BETWEEN_UPDATES);
+  let renderInterval = setInterval(checkForRender, 50);
+  let updateInterval = setInterval(
+    () => {
+      state = tick(state, undefined);
+      if (state.type === "jumpscare" || state.type === "victory") {
+        clearInterval(updateInterval);
+      }
+    },
+    (1000 / TICKS_PER_SECOND) * 2,
+  );
 };
 
 const createOfficeButton = (ctx: CommandContext, update: UpdateCallback): MessageActionRow[] => {
