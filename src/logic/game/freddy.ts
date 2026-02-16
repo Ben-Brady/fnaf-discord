@@ -29,7 +29,6 @@ export const tickFreddy = (state: GameplayState, dt: number) => {
   const success = movementOpportunity(freddy.difficulty);
   if (!success) return;
 
-  if (freddy.position === "office") jumpToJumpscare("freddy-office");
 
   const atStart = freddy.position === "1a";
   const bonnieAtStart = state.bonnie.position === "1a";
