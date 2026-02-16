@@ -10,6 +10,10 @@ export const createStateRandom = (state: { seed: number }) => {
     return state.seed / M;
   };
 
+  const chance = (chance: number) => {
+    return random() < 1 / chance;
+  };
+
   const randomBetween = (min: number, max: number) => {
     const range = max - min;
     return min + random() * range;
@@ -24,5 +28,5 @@ export const createStateRandom = (state: { seed: number }) => {
     return random() * 20 <= difficulty;
   };
 
-  return { random, randomBetween, choose, movementOpportunity };
+  return { random, randomBetween, chance, choose, movementOpportunity };
 };
