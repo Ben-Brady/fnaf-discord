@@ -1,3 +1,6 @@
+import type { FreddyState } from "./game/freddy";
+import type { PoweroutState } from "./powerout";
+
 export type TimerState = { value: null | number };
 export type GameState = GameplayState | JumpscareState | PoweroutState | VictoryState;
 
@@ -36,7 +39,9 @@ export type GameplayState = {
   power: number;
   view: "camera" | "office";
   camera: CameraName;
+
   camera_rng: number;
+  golden_freddy_appeared: boolean;
 
   left_door: boolean;
   right_door: boolean;
@@ -88,10 +93,4 @@ export type BonnieState = {
   timer: number;
   difficulty: number;
   position: BonnieLocation;
-};
-
-export type FreddyState = {
-  timer: number;
-  difficulty: number;
-  position: FreddyLocation;
 };
