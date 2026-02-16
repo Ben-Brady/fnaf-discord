@@ -51,8 +51,8 @@ export const logMap = (state: GameplayState) => {
    |_____|  |     | |  CAM | |     |
             |     |_|      |_|     |
             |  BD DL        DR CD  |
-            |      _        _      |
-            |     | |      | | 4bC |
+            |      _        _  FD  |
+            |     | |BOCOFO| | 4bC |
             | 2bB | |______| | 4bF |
             |_____|          |_____|
 `;
@@ -89,11 +89,16 @@ export const logMap = (state: GameplayState) => {
 
   map = map.replace("CD", chica_pos === "door" ? " C" : "  ");
   map = map.replace("BD", bonnie_pos === "door" ? "B " : "  ");
+  map = map.replace("FD", freddy_pos === "door" ? "F " : "  ");
 
   map = map.replace("DR", state.right_door ? "| " : "  ");
   map = map.replace("DL", state.left_door ? " |" : "  ");
+
   map = map.replace("CAM", state.view === "camera" ? state.camera.padEnd(3, " ") : "   ");
 
+  map = map.replace("BO", bonnie_pos === "office" ? " B" : "  ");
+  map = map.replace("CO", chica_pos === "office" ? " C" : "  ");
+  map = map.replace("FO", freddy_pos === "office" ? " F" : "  ");
   console.log(map);
 };
 

@@ -6,8 +6,7 @@ import { sample } from "lodash";
 import { logMap, logState } from "./debug";
 import { createNight, createNumberedNight } from "./fnaf.js";
 
-// let state: GameState = createNumberedNight(5);
-let state: GameState = createNight({ difficulties: { bonnie: 20 } });
+let state: GameState = createNight({ difficulties: { bonnie: 0, chica: 0, foxy: 0, freddy: 20 } });
 
 const randomAction = () =>
   sample<GameplayInput>([
@@ -74,12 +73,16 @@ const createGuardAI = () => {
 while (state.type === "gameplay") {
   if (state.type !== "gameplay") break;
 
+  state.bonnie.position = "1b";
+  state.chica.position = "1b";
+
   console.clear();
   logMap(state);
   // logState(state);
 
-  const action: GameplayInput = state.left_door ? undefined : { type: "left-door" };
-  state = runTick(state, action, 0.05);
+  // const action: GameplayInput = state.left_door ? undefined : { type: "left-door" };
+  const action = randomAction()
+  state = runTick(state, action, 0.016);
   await sleep(5);
 }
 
