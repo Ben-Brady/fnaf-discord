@@ -16,7 +16,6 @@ export type PoweroutState = {
 
   seed: number;
   time: number;
-  ticks_since_started: number;
   remaining_minimum: number;
 
   progress: "lights_off" | "freddy" | "blackout";

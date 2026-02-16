@@ -26,6 +26,7 @@ export const createTimeout = (state: GameplayState, id: string, duration: number
 
   const didPass = (dt: number) => {
     state.timers[id] -= dt;
+    return state.timers[id] < 0;
   };
 
   return { reset, didPass };

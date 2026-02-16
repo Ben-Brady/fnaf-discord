@@ -1,4 +1,4 @@
-import { runTick, TICKS_PER_SECOND } from "../logic/tick";
+import { runTick } from "../logic/tick";
 import {
   type CameraName,
   type GameplayInput,
@@ -24,8 +24,7 @@ type UpdateCallback = (
 ) => Promise<void>;
 
 const formatPower = (power: number) => {
-  const percent = Math.ceil((1 - power / TOTAL_POWER) * 100);
-  return `${percent.toFixed()}%`;
+  return `${power.toFixed()}%`;
 };
 
 const formatTime = (time: number) => {
@@ -138,7 +137,7 @@ export const runGame = async (
     if (state.type === "jumpscare" || state.type === "victory") {
       clearInterval(updateInterval);
     }
-  }, (1000 / TICKS_PER_SECOND) * 2);
+  }, 50);
 };
 
 const createOfficeButton = (

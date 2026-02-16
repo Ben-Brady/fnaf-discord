@@ -12,7 +12,6 @@ export const createPoweroutState = (state: GameplayState): PoweroutState => {
     progress: "blackout",
     seed: state.seed,
     remaining_minimum: 0,
-    ticks_since_started: 0,
     time: state.time,
   };
 };
@@ -21,8 +20,6 @@ export const runPoweroutTick = (state: PoweroutState, dt: number) => {
   const { randint: randomBetween, choose } = createStateRandom(state);
   state.time += dt;
   if (state.time > NIGHT_DURATION) jumpToVictory();
-
-  state.ticks_since_started += dt;
 
   if (state.remaining_minimum > 0) {
     state.remaining_minimum -= dt;

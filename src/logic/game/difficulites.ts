@@ -1,9 +1,9 @@
 import type { GameplayState } from "../state";
 
 export const applyDifficultyIncreases = (state: GameplayState, dt: number) => {
-  const MARK_2AM = 60 + 59 * 2;
-  const MARK_3AM = 60 + 59 * 3;
-  const MARK_4AM = 60 + 59 * 4;
+  const MARK_2AM = 90 + 89 * 2;
+  const MARK_3AM = 90 + 89 * 3;
+  const MARK_4AM = 90 + 89 * 4;
 
   const nextTime = state.time + dt;
 
