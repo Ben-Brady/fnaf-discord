@@ -2,7 +2,7 @@ import type { GameplayInput, GameplayState } from "../state";
 import { createStateRandom } from "./random";
 
 export const applyUserInput = (state: GameplayState, input: GameplayInput) => {
-  const { randomBetween: randint } = createStateRandom(state);
+  const { randomBetween } = createStateRandom(state);
   if (!input) return;
 
   const inCamera = state.view === "camera";
@@ -12,7 +12,7 @@ export const applyUserInput = (state: GameplayState, input: GameplayInput) => {
     state.view = "camera";
     state.left_light = false;
     state.right_light = false;
-    state.camera_rng = randint(0, 1000);
+    state.camera_rng = Math.floor(randomBetween(0, 101)); // TODO: Fix off by one error
   }
 
   if (inCamera && input.type === "close-camera") {
