@@ -1,5 +1,5 @@
-import { runTick } from "../fnaf.js/tick";
 import {
+  runTick,
   type CameraName,
   type GameplayInput,
   type GameplayState,
