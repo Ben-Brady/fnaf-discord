@@ -1,7 +1,6 @@
-import { NIGHT_DURATION, TICKS_PER_SECOND } from "./constants";
-import type { GameplayState, JumpscareState, PoweroutState, VictoryState } from "./state";
-import { JumpscareError } from "./game";
-import { createStateRandom } from "./game/utils";
+import { NIGHT_DURATION } from "./constants";
+import type { GameplayState, PoweroutState } from "./state";
+import { createStateRandom } from "./game/random";
 import { jumpToJumpscare, jumpToVictory } from "./jumps";
 
 const FREDDY_WAIT = 5;
@@ -19,7 +18,7 @@ export const createPoweroutState = (state: GameplayState): PoweroutState => {
 };
 
 export const runPoweroutTick = (state: PoweroutState, dt: number) => {
-  const { randomBetween, choose } = createStateRandom(state);
+  const { randint: randomBetween, choose } = createStateRandom(state);
   state.time += dt;
   if (state.time > NIGHT_DURATION) jumpToVictory();
 

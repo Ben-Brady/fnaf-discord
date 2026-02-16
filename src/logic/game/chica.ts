@@ -1,6 +1,6 @@
 import { jumpToJumpscare } from "../jumps";
 import type { ChicaLocation, ChicaState, GameplayState } from "../state";
-import { createStateRandom } from "./utils";
+import { createStateRandom } from "./random";
 
 const INTERVAL = 4.98;
 

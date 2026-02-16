@@ -4,11 +4,12 @@
     "type": "module",
     "scripts": {
         "start": "bun src/index.ts",
+        "build": "tsc",
         "dev": "bun --watch src/index.ts"
     },
     "dependencies": {
         "@types/lodash": "^4.17.23",
-        "discopic": "^0.0.3-development",
+        "discopic": "^0.1.1",
         "discord.js": "^14.25.1",
         "lodash": "^4.17.23"
     },

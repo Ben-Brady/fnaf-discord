@@ -1,6 +1,6 @@
 import { jumpToJumpscare } from "../jumps";
 import type { FreddyLocation, FreddyState, GameplayState } from "../state";
-import { createStateRandom } from "./utils";
+import { createStateRandom } from "./random";
 
 export const FREDDY_TIMER = 3.02;
 
@@ -29,7 +29,7 @@ export const tickFreddy = (state: GameplayState, dt: number) => {
   const success = movementOpportunity(freddy.difficulty);
   if (!success) return;
 
-  if (freddy.position === "office") throw new JumpscareError("freddy-office");
+  if (freddy.position === "office") jumpToJumpscare("freddy-office");
 
   const atStart = freddy.position === "1a";
   const bonnieAtStart = state.bonnie.position === "1a";

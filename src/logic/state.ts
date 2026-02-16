@@ -41,6 +41,7 @@ export type GameplayState = {
   type: "gameplay";
   night: NightNumber;
 
+  timers: Record<string, number>;
   seed: number;
   time: number;
   power: number;

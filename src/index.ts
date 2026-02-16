@@ -1,8 +1,7 @@
 import { createCommand, attachSlashCommands } from "discopic";
 import { Client } from "discord.js";
 import { runGame } from "./commands/run";
-import { createGame } from "./logic/tick";
-import { createNight } from "./logic/game";
+import { createNight, createNumberedNight } from "./logic";
 
 const client = new Client({ intents: ["Guilds", "GuildMessages", "GuildMembers"] });
 
@@ -48,7 +47,7 @@ const gameCommand = createCommand({
     interaction,
     { bonnie = 0, chica = 0, foxy = 0, freddy = 0, private: isPrivate = false }
   ) {
-    let state = createGame({ bonnie, chica, foxy, freddy });
+    let state = createNight({ difficulties: { bonnie, chica, foxy, freddy } });
     runGame(state, interaction, isPrivate);
   },
 });
@@ -70,7 +69,7 @@ const nightCommand = createCommand({
     },
   },
   async execute(interaction, { night, private: isPrivate = false }) {
-    let state = createNight(night);
+    let state = createNumberedNight(night as any);
     runGame(state, interaction, isPrivate);
   },
 });

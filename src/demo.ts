@@ -1,17 +1,13 @@
-import { runTick, TICKS_PER_SECOND } from "./logic/tick";
-import { createGame } from "./logic/game";
+import { runTick } from "./logic/tick";
 import { getImage, render } from "./render";
-import { sleep, sleepSync } from "bun";
-import type { GameState, GameplayInput } from "./logic/state";
+import { sleep } from "bun";
+import type { GameState, GameplayInput, GameplayState } from "./logic/state";
 import { sample } from "lodash";
 import { logMap, logState } from "./debug";
+import { createNight, createNumberedNight } from "./logic";
 
-let state: GameState = createGame({
-  bonnie: 10,
-  chica: 10,
-  foxy: 10,
-  freddy: 10,
-});
+// let state: GameState = createNumberedNight(5);
+let state: GameState = createNight({ difficulties: { bonnie: 20 } });
 
 const randomAction = () =>
   sample<GameplayInput>([
@@ -35,16 +31,56 @@ const randomAction = () =>
     { type: "swap-camera", camera: "7" },
   ]);
 
+const createGuardAI = () => {
+  let reactionTime = 0;
+  let lastCheckedFoxy = 0;
+  function nextAction(state: GameplayState): GameplayInput {
+    reactionTime--;
+    if (reactionTime > 0) return;
+    reactionTime = 20;
+
+    const { left_door, left_light, right_door, right_light, bonnie, chica } = state;
+    const inOffice = state.view === "office";
+    const inCamera = state.view === "camera";
+
+    if (inCamera) {
+      lastCheckedFoxy--;
+      if (reactionTime <= 0) {
+        reactionTime = lastCheckedFoxy;
+      }
+      return { type: "swap-camera", camera: "1c" };
+    }
+
+    if (inOffice) {
+      if (!left_door && left_light && bonnie.position === "door") {
+        return { type: "left-door" };
+      }
+
+      if (!right_door && right_light && chica.position === "door") {
+        return { type: "left-door" };
+      }
+
+      if (left_light) return { type: "left-light" };
+      if (right_light) return { type: "left-light" };
+
+      if (!state.left_light && state.view === "office" && state.chica.position === "door") {
+        return { type: "left-door" };
+      }
+    }
+  }
+  return { nextAction };
+};
+
 while (state.type === "gameplay") {
   if (state.type !== "gameplay") break;
 
   console.clear();
   logMap(state);
+  // logState(state);
 
-  const action = randomAction();
-  state = runTick(state, action);
-  console.log("foo");
-  await sleep(10);
+  const action: GameplayInput = state.left_door ? undefined : { type: "left-door" };
+  state = runTick(state, action, 0.05);
+  await sleep(5);
 }
 
 console.log(`Jumpscare: ${getImage(render(state))}`);

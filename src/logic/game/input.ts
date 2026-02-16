@@ -1,17 +1,21 @@
 import type { GameplayInput, GameplayState } from "../state";
+import { createStateRandom } from "./random";
 
 export const applyUserInput = (state: GameplayState, input: GameplayInput) => {
+  const { randint } = createStateRandom(state);
   if (!input) return;
 
   const inCamera = state.view === "camera";
   const inOffice = state.view === "office";
 
-  if (input.type === "open-camera" && state.view === "office") {
+  if (inOffice && input.type === "open-camera") {
     state.view = "camera";
     state.left_light = false;
     state.right_light = false;
+    state.camera_rng = randint(0, 1000);
   }
-  if (input.type === "close-camera" && state.view === "camera") {
+
+  if (inCamera && input.type === "close-camera") {
     state.view = "office";
   }
 

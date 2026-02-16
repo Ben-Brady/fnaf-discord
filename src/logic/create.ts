@@ -28,7 +28,8 @@ export const createNight = (options: {
     left_light: false,
     right_door: false,
     right_light: false,
-
+    
+    timers: {},
     power: TOTAL_POWER,
     time: 0,
     seed: seed,

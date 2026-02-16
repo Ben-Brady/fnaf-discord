@@ -10,18 +10,13 @@ export const createStateRandom = (state: { seed: number }) => {
     return state.seed / M;
   };
 
-  const randomBetween = (min: number, max: number) => {
+  const randint = (min: number, max: number) => {
     const range = max - min;
     return min + random() * range;
   };
 
   const choose = <T extends any>(...options: T[]): T => {
-    const index = random() * options.length;
-    return options[index];
-  };
-
-  const sample = <T extends any>(options: T[]): T => {
-    const index = random() * options.length;
+    const index = Math.floor(random() * options.length);
     return options[index];
   };
 
@@ -29,5 +24,5 @@ export const createStateRandom = (state: { seed: number }) => {
     return random() * 20 <= difficulty;
   };
 
-  return { random, randomBetween, sample, choose, movementOpportunity };
+  return { random, randint, choose, movementOpportunity };
 };

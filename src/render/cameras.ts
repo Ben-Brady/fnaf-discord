@@ -34,10 +34,10 @@ export const camera_1b = (state: GameplayState): Image => {
 export const camera_1c = (state: GameplayState): Image => {
   const { foxy } = state;
 
-  if (foxy.position.location === "1c") {
-    if (foxy.position.variant === "0") return "cam-1c-0";
-    if (foxy.position.variant === "1") return "cam-1c-1";
-    if (foxy.position.variant === "2") return "cam-1c-2";
+  if (foxy.position === "1c") {
+    if (foxy.progress === 0) return "cam-1c-0";
+    if (foxy.progress === 1) return "cam-1c-1";
+    if (foxy.progress === 2) return "cam-1c-2";
   }
 
   return "cam-1c-3";
@@ -46,22 +46,22 @@ export const camera_1c = (state: GameplayState): Image => {
 export const camera_2a = (state: GameplayState): Image => {
   const { bonnie, foxy } = state;
 
-  if (bonnie.position.location === "2a") return "cam-2a-b";
-  if (foxy.position.location === "2a") return "cam-2a-f";
+  if (foxy.position === "2a") return "cam-2a-f";
+  if (bonnie.position === "2a") return "cam-2a-b";
   return "cam-2a";
 };
 
 export const camera_2b = (state: GameplayState): Image => {
   const { bonnie } = state;
 
-  if (bonnie.position.location === "2b") return "cam-2b-b";
+  if (bonnie.position === "2b") return "cam-2b-b";
   return "cam-2b";
 };
 
 export const camera_3 = (state: GameplayState): Image => {
   const { bonnie } = state;
 
-  if (bonnie.position.location === "3") return "cam-3-b";
+  if (bonnie.position === "3") return "cam-3-b";
   return "cam-3";
 };
 
@@ -83,8 +83,10 @@ export const camera_4b = (state: GameplayState): Image => {
 export const camera_5 = (state: GameplayState): Image => {
   const { bonnie } = state;
 
-  if (bonnie.position.location === "5") {
-    if (bonnie.position.variant === "camera") return "cam-5-b-camera";
+  if (bonnie.position === "5") {
+    // TODO: Reimplement
+    // if (bonnie.position.variant === "camera") return "cam-5-b-camera";
+
     return "cam-5-b-door";
   }
   return "cam-5";
@@ -106,11 +108,11 @@ export const camera_7 = (state: GameplayState): Image => {
 
 const getAnimatronicOnCamera = (
   state: GameplayState,
-  position: CameraName,
+  position: CameraName
 ): { freddy: boolean; chica: boolean; bonnie: boolean } => {
   return {
-    bonnie: state.bonnie.position.location === position,
-    chica: state.chica.position.location === position,
-    freddy: state.freddy.position.location === position,
+    bonnie: state.bonnie.position === position,
+    chica: state.chica.position === position,
+    freddy: state.freddy.position === position,
   };
 };

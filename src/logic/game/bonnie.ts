@@ -1,6 +1,6 @@
 import { jumpToJumpscare } from "../jumps";
 import type { BonnieLocation, BonnieState, GameplayState } from "../state";
-import { createStateRandom } from "./utils";
+import { createStateRandom } from "./random";
 
 export const INTERVAL = 4.97;
 
@@ -14,7 +14,7 @@ export const createBonnie = (difficulty: number): BonnieState => {
 
 export const tickBonnie = (state: GameplayState, dt: number) => {
   const { bonnie } = state;
-  const { movementOpportunity, sample } = createStateRandom(state);
+  const { movementOpportunity, choose } = createStateRandom(state);
 
   if (bonnie.position === "office" && state.view === "camera") {
     jumpToJumpscare("bonnie");
@@ -27,13 +27,13 @@ export const tickBonnie = (state: GameplayState, dt: number) => {
   bonnie.timer += INTERVAL;
 
   const nextPositionLookup: Record<BonnieLocation, BonnieLocation> = {
-    "1a": sample(["1b", "5"]),
-    "1b": sample(["5", "2a"]),
-    "5": sample(["1b", "2a"]),
-    "2a": sample(["2b", "3"]),
-    "3": sample(["door", "2a"]),
-    "2b": sample(["door", "3"]),
-    door: state.left_door ? "2a" : "office",
+    "1a": choose("1b", "5"),
+    "1b": choose("5", "2a"),
+    "5": choose("1b", "2a"),
+    "2a": choose("2b", "3"),
+    "3": choose("door", "2a"),
+    "2b": choose("door", "3"),
+    door: state.left_door ? "1b" : "office",
     office: "office",
   };
 

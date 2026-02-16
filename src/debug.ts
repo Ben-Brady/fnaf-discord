@@ -1,13 +1,12 @@
-import { NIGHT_DURATION, TICKS_PER_SECOND } from "./logic/tick";
+import { NIGHT_DURATION } from "./logic/constants";
 import type { GameplayState } from "./logic/state";
 
 export const logState = (state: GameplayState) => {
   const { bonnie, chica, foxy, freddy } = state;
-  console.clear();
-  console.log(`Freddy (${freddy.position.location}): ${freddy.difficulty} | ${freddy.timer}`);
-  console.log(`Bonnie (${bonnie.position.location}): ${bonnie.difficulty} | ${bonnie.timer}`);
-  console.log(`Chica (${chica.position.location}): ${chica.difficulty} | ${chica.timer}`);
-  console.log(`Foxy (${foxy.position.location}): ${foxy.difficulty} | ${foxy.timer}`);
+  console.log(`Freddy (${freddy.position}): ${freddy.difficulty} | ${freddy.timer.toFixed(1)}`);
+  console.log(`Bonnie (${bonnie.position}): ${bonnie.difficulty} | ${bonnie.timer.toFixed(1)}`);
+  console.log(`Chica (${chica.position}): ${chica.difficulty} | ${chica.timer.toFixed(1)}`);
+  console.log(`Foxy (${foxy.position}): ${foxy.difficulty} | ${foxy.timer.toFixed(1)}`);
   console.log(`  Running: ${foxy.running}`);
   console.log(`  Hall Timeout: ${foxy.hall_timeout}`);
   console.log(`  Hall Travel: ${foxy.hall_travel_time}`);
@@ -17,16 +16,18 @@ export const logState = (state: GameplayState) => {
   console.log(`Right Door: ${state.right_door}`);
   console.log(`Left Light: ${state.left_light}`);
   console.log(`Right Light: ${state.right_light}`);
-  console.log(`Camera: ${state.camera.location}`);
+  console.log(`Camera: ${state.camera}`);
   console.log(`View: ${state.view}`);
+
+  console.log(`${state.time.toFixed(1)} / ${NIGHT_DURATION} (${getAM(state.time)})`);
 };
 
 export const logMap = (state: GameplayState) => {
   const { bonnie, chica, foxy, freddy } = state;
-  const bonnie_pos = bonnie.position.location;
-  const chica_pos = chica.position.location;
-  const freddy_pos = freddy.position.location;
-  const foxy_pos = foxy.position.location;
+  const bonnie_pos = bonnie.position;
+  const chica_pos = chica.position;
+  const freddy_pos = freddy.position;
+  const foxy_pos = foxy.position;
   let map = `
                   ____________
                  |            |
@@ -47,9 +48,9 @@ export const logMap = (state: GameplayState) => {
    |     |  |     |          |     | |   6C     |
    |  3B |__|     |          |     | |          |
    |      __      |  ______  |     | |__________|
-   |_____|  |     | |      | |     |
+   |_____|  |     | |  CAM | |     |
             |     |_|      |_|     |
-            |                      |
+            |  BD DL        DR CD  |
             |      _        _      |
             |     | |      | | 4bC |
             | 2bB | |______| | 4bF |
@@ -64,7 +65,7 @@ export const logMap = (state: GameplayState) => {
   map = map.replace("1bC", chica_pos === "1b" ? " C " : "   ");
   map = map.replace("1bB", bonnie_pos === "1b" ? " B " : "   ");
 
-  map = map.replace("1cF", foxy_pos === "1c" ? " F " : "   ");
+  map = map.replace("1cF", foxy_pos === "1c" ? `F-${foxy.progress}` : "   ");
 
   map = map.replace("2aB", bonnie_pos === "2a" ? " B " : "   ");
   map = map.replace("2aF", foxy_pos === "2a" ? " F " : "   ");
@@ -86,13 +87,18 @@ export const logMap = (state: GameplayState) => {
   map = map.replace("7C", chica_pos === "7" ? "C " : "  ");
   map = map.replace("7F", freddy_pos === "7" ? "F " : "  ");
 
-  console.clear();
+  map = map.replace("CD", chica_pos === "door" ? " C" : "  ");
+  map = map.replace("BD", bonnie_pos === "door" ? "B " : "  ");
+
+  map = map.replace("DR", state.right_door ? "| " : "  ");
+  map = map.replace("DL", state.left_door ? " |" : "  ");
+  map = map.replace("CAM", state.view === "camera" ? state.camera.padEnd(3, " ") : "   ");
+
   console.log(map);
-  console.log(`${state.time} / ${NIGHT_DURATION} (${getAM(state.time)})`);
 };
 
 const getAM = (time: number) => {
-  const second = time / TICKS_PER_SECOND;
+  const second = time;
   if (second < 60) return "12AM";
   if (second < 119) return "1AM";
   if (second < 178) return "2AM";

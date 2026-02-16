@@ -1,6 +1,6 @@
 import { jumpToJumpscare } from "../jumps";
 import type { FoxyState, GameplayState } from "../state";
-import { createStateRandom } from "./utils";
+import { createStateRandom } from "./random";
 
 const INTERVAL = 5.01;
 const FOXY_TRAVEL_TIME = 3;
@@ -21,24 +21,28 @@ export const createFoxy = (difficulty: number): FoxyState => {
 };
 
 export const tickFoxy = (state: GameplayState, dt: number) => {
-  const { randomBetween, movementOpportunity } = createStateRandom(state);
+  const { randint: randomBetween, movementOpportunity } = createStateRandom(state);
   const { foxy } = state;
 
-  foxy.timer -= 1;
-  if (foxy.remaining_lockout > 0) foxy.remaining_lockout -= 1;
+  if (foxy.remaining_lockout > 0) foxy.remaining_lockout -= dt;
 
   if (state.view === "camera") {
     foxy.remaining_lockout = randomBetween(0.83, 17.48);
   }
 
   if (foxy.position === "1c") {
+    foxy.timer -= dt;
     if (foxy.timer > 0) return;
-    foxy.timer = INTERVAL;
+    foxy.timer += INTERVAL;
+
+    if (foxy.remaining_lockout > 0) return;
 
     const success = movementOpportunity(foxy.difficulty);
     if (!success) return foxy;
     foxy.progress += 1;
-    if (foxy.progress === 2) {
+
+    if (foxy.progress === 3) {
+      foxy.progress = 0;
       foxy.position = "2a";
       foxy.hall_timeout = FOXY_HALL_TIMEOUT;
       foxy.hall_travel_time = FOXY_TRAVEL_TIME;

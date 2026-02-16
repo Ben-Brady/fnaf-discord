@@ -9,18 +9,18 @@ export class ChangeStateError extends Error {
   }
 }
 
-export const jumpToState = (state: GameState) => {
+export const jumpToStateChange = (state: GameState) => {
   throw new ChangeStateError(state);
 };
 
 export const jumpToJumpscare = (jumpscare: JumpscareType) => {
-  jumpToState({ type: "jumpscare", jumpscare });
+  jumpToStateChange({ type: "jumpscare", jumpscare });
 };
 
 export const jumpToPowerout = (state: GameplayState) => {
-  jumpToState(createPoweroutState(state));
+  jumpToStateChange(createPoweroutState(state));
 };
 
 export const jumpToVictory = () => {
-  jumpToState({ type: "victory" });
+  jumpToStateChange({ type: "victory" });
 };

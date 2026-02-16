@@ -2,8 +2,8 @@ import type { Image } from "./files";
 import type { GameplayState } from "../logic/state";
 
 export const renderOffice = (state: GameplayState): Image => {
-  const chica = state.chica.position.location === "office";
-  const bonnie = state.chica.position.location === "office";
+  const chica = state.chica.position === "office";
+  const bonnie = state.chica.position === "office";
   const { left_light, right_light, left_door, right_door } = state;
 
   if (left_light && !left_door && !right_door) return "office-ll";

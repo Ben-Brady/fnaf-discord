@@ -34,19 +34,19 @@ export const render = (state: GameState): Image => {
     if (state.progress === "lights_off") return "powerout-freddy";
     return assertNever(state.progress);
   }
-  if (state.view === "office") return renderOffice(state);
+  if (state.view == "office") return renderOffice(state);
 
-  if (state.camera.location === "1a") return camera_1a(state);
-  if (state.camera.location === "1b") return camera_1b(state);
-  if (state.camera.location === "1c") return camera_1c(state);
-  if (state.camera.location === "2a") return camera_2a(state);
-  if (state.camera.location === "2b") return camera_2b(state);
-  if (state.camera.location === "3") return camera_3(state);
-  if (state.camera.location === "4a") return camera_4a(state);
-  if (state.camera.location === "4b") return camera_4b(state);
-  if (state.camera.location === "5") return camera_5(state);
-  if (state.camera.location === "6") return camera_6();
-  if (state.camera.location === "7") return camera_7(state);
+  if (state.camera === "1a") return camera_1a(state);
+  if (state.camera === "1b") return camera_1b(state);
+  if (state.camera === "1c") return camera_1c(state);
+  if (state.camera === "2a") return camera_2a(state);
+  if (state.camera === "2b") return camera_2b(state);
+  if (state.camera === "3") return camera_3(state);
+  if (state.camera === "4a") return camera_4a(state);
+  if (state.camera === "4b") return camera_4b(state);
+  if (state.camera === "5") return camera_5(state);
+  if (state.camera === "6") return camera_6();
+  if (state.camera === "7") return camera_7(state);
 
   return assertNever(state.camera);
 };

@@ -1,4 +1,4 @@
-import { createGame, runTick, TICKS_PER_SECOND } from "../logic/tick";
+import { runTick, TICKS_PER_SECOND } from "../logic/tick";
 import {
   type CameraName,
   type GameplayInput,
@@ -15,7 +15,7 @@ import {
   StringSelectMenuInteraction,
 } from "discord.js";
 import { preloadImages, getImageLink } from "../image-cache";
-import { MAX_POWER, NIGHT_DURATION } from "../logic/tick";
+import { NIGHT_DURATION, TOTAL_POWER } from "../logic/constants";
 
 type MessageActionRow = ActionRowBuilder<MessageActionRowComponentBuilder>;
 type UpdateCallback = (
@@ -24,7 +24,7 @@ type UpdateCallback = (
 ) => Promise<void>;
 
 const formatPower = (power: number) => {
-  const percent = Math.ceil((1 - power / MAX_POWER) * 100);
+  const percent = Math.ceil((1 - power / TOTAL_POWER) * 100);
   return `${percent.toFixed()}%`;
 };
 
@@ -62,7 +62,7 @@ export const runGame = async (
     secondInteraction: ButtonInteraction | StringSelectMenuInteraction | undefined = undefined,
     input: GameplayInput = undefined
   ) => {
-    state = runTick(state, input);
+    state = runTick(state, input, 0.05);
     lastUpdate = Date.now();
     const image = render(state);
     lastImage = image;
@@ -132,9 +132,9 @@ export const runGame = async (
   };
 
   await update();
-  let renderInterval = setInterval(checkForRender, 50);
+  let renderInterval = setInterval(checkForRender, 1000 / 20);
   let updateInterval = setInterval(() => {
-    state = runTick(state, undefined);
+    state = runTick(state, undefined, 0.05);
     if (state.type === "jumpscare" || state.type === "victory") {
       clearInterval(updateInterval);
     }
@@ -222,7 +222,7 @@ const createCameraButtons = (
       { label: "6 - Kitchen", value: "6" },
       { label: "7 - Bathroom", value: "7" },
     ],
-    defaultValue: state.camera.location,
+    defaultValue: state.camera,
     onSelect: async (interaction) => {
       const camera = interaction.values[0] as CameraName;
       await update(interaction, { type: "swap-camera", camera });
@@ -230,7 +230,7 @@ const createCameraButtons = (
   });
 
   return [
-    new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([closeCamera]),
     new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([cameraDropdown]),
+    new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents([closeCamera]),
   ];
 };

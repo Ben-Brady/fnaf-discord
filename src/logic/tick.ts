@@ -2,7 +2,6 @@ import type { GameplayInput, GameState } from "./state";
 import { runPoweroutTick } from "./powerout";
 import { runGameTick } from "./game";
 import { ChangeStateError } from "./jumps";
-export { TOTAL_POWER as MAX_POWER, NIGHT_DURATION, TICKS_PER_SECOND } from "./constants";
 
 export const runTick = (state: GameState, input: GameplayInput, dt: number): GameState => {
   state = structuredClone(state);
@@ -21,4 +20,3 @@ export const runTick = (state: GameState, input: GameplayInput, dt: number): Gam
 
   return state;
 };
-export * from "./state";
