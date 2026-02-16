@@ -2,12 +2,12 @@ import { jumpToJumpscare } from "../jumps";
 import type { FreddyLocation, FreddyState, GameplayState } from "../state";
 import { createStateRandom } from "./random";
 
-export const FREDDY_TIMER = 3.02;
+export const INTERVAL = 3.02;
 
 export const createFreddy = (difficulty: number): FreddyState => {
   return {
     difficulty: difficulty,
-    timer: FREDDY_TIMER,
+    timer: INTERVAL,
     position: "1a",
   };
 };
@@ -24,7 +24,7 @@ export const tickFreddy = (state: GameplayState, dt: number) => {
     freddy.timer -= dt;
     return;
   }
-  freddy.timer += FREDDY_TIMER;
+  freddy.timer += INTERVAL;
 
   const success = movementOpportunity(freddy.difficulty);
   if (!success) return;
@@ -38,7 +38,7 @@ export const tickFreddy = (state: GameplayState, dt: number) => {
   if (atStart && (bonnieAtStart || chicaAtStart)) return;
 
   // Freddy on cam4b is blocked by cams
-  if (state.view === "camera" && freddy.position === "4b") {
+  if (state.view === "camera" && state.camera === "4b" && freddy.position === "4b") {
     return;
   }
 
