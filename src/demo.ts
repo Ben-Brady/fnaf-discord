@@ -1,16 +1,16 @@
-import { tick } from "./logic";
+import { runTick, TICKS_PER_SECOND } from "./logic/tick";
 import { createGame } from "./logic/game";
 import { getImage, render } from "./render";
-import { sleepSync } from "bun";
+import { sleep, sleepSync } from "bun";
 import type { GameState, GameplayInput } from "./logic/state";
 import { sample } from "lodash";
 import { logMap, logState } from "./debug";
 
 let state: GameState = createGame({
-  bonnie: 0,
-  chica: 0,
+  bonnie: 10,
+  chica: 10,
   foxy: 10,
-  freddy: 0,
+  freddy: 10,
 });
 
 const randomAction = () =>
@@ -38,13 +38,13 @@ const randomAction = () =>
 while (state.type === "gameplay") {
   if (state.type !== "gameplay") break;
 
-  // console.clear();
-  // logMap(state);
+  console.clear();
+  logMap(state);
 
   const action = randomAction();
-  state = tick(state, action);
-  sleepSync(33);
+  state = runTick(state, action);
+  console.log("foo");
+  await sleep(10);
 }
 
-console.log();
 console.log(`Jumpscare: ${getImage(render(state))}`);

@@ -1,3 +1,4 @@
+import { NIGHT_DURATION, TICKS_PER_SECOND } from "./logic/tick";
 import type { GameplayState } from "./logic/state";
 
 export const logState = (state: GameplayState) => {
@@ -10,7 +11,7 @@ export const logState = (state: GameplayState) => {
   console.log(`  Running: ${foxy.running}`);
   console.log(`  Hall Timeout: ${foxy.hall_timeout}`);
   console.log(`  Hall Travel: ${foxy.hall_travel_time}`);
-  console.log(`  Lockout: ${foxy.reamining_lockout}`);
+  console.log(`  Lockout: ${foxy.remaining_lockout}`);
   console.log();
   console.log(`Left Door: ${state.left_door}`);
   console.log(`Right Door: ${state.right_door}`);
@@ -87,4 +88,16 @@ export const logMap = (state: GameplayState) => {
 
   console.clear();
   console.log(map);
+  console.log(`${state.time} / ${NIGHT_DURATION} (${getAM(state.time)})`);
+};
+
+const getAM = (time: number) => {
+  const second = time / TICKS_PER_SECOND;
+  if (second < 60) return "12AM";
+  if (second < 119) return "1AM";
+  if (second < 178) return "2AM";
+  if (second < 237) return "3AM";
+  if (second < 296) return "4AM";
+  if (second < 355) return "5AM";
+  return "6AM";
 };

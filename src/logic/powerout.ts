@@ -1,39 +1,49 @@
-import { cloneDeep, random, sample } from "lodash";
 import { NIGHT_DURATION, TICKS_PER_SECOND } from "./constants";
-import type { JumpscareState, PoweroutState, VictoryState } from "./state";
+import type { GameplayState, JumpscareState, PoweroutState, VictoryState } from "./state";
+import { JumpscareError } from "./game";
+import { createStateRandom } from "./game/utils";
+import { jumpToJumpscare, jumpToVictory } from "./jumps";
 
-export const poweroutTick = (
-  state: PoweroutState,
-): PoweroutState | JumpscareState | VictoryState => {
-  state = cloneDeep(state);
-  state.time += 1;
-  state.ticks_since_started += 1;
+const FREDDY_WAIT = 5;
+const POWEROUT_WAIT = 5;
 
-  if (state.time > NIGHT_DURATION) return { type: "victory" };
+export const createPoweroutState = (state: GameplayState): PoweroutState => {
+  return {
+    type: "powerout",
+    progress: "blackout",
+    seed: state.seed,
+    remaining_minimum: 0,
+    ticks_since_started: 0,
+    time: state.time,
+  };
+};
 
-  if (state.remaining_minimum_ticks > 0) {
-    state.remaining_minimum_ticks -= 1;
-    return state;
+export const runPoweroutTick = (state: PoweroutState, dt: number) => {
+  const { randomBetween, choose } = createStateRandom(state);
+  state.time += dt;
+  if (state.time > NIGHT_DURATION) jumpToVictory();
+
+  state.ticks_since_started += dt;
+
+  if (state.remaining_minimum > 0) {
+    state.remaining_minimum -= dt;
+    return;
   }
 
   if (state.progress === "blackout") {
-    if (random(0, 100) !== 1) return state;
-    state.progress = sample(["freddy", "lights_off"]);
-    state.remaining_minimum_ticks = TICKS_PER_SECOND * 5;
-    return state;
+    if (randomBetween(0, 100) < 1) return;
+    state.progress = choose("freddy", "lights_off");
+    state.remaining_minimum = FREDDY_WAIT;
   }
 
   if (state.progress === "freddy") {
-    if (random(0, 100) !== 1) return state;
+    if (randomBetween(0, 100) < 1) return;
     state.progress = "lights_off";
-    state.remaining_minimum_ticks = TICKS_PER_SECOND * 5;
-    return state;
+    state.remaining_minimum = POWEROUT_WAIT;
   }
 
   if (state.progress === "lights_off") {
-    if (random(0, 100) !== 1) return state;
-    return { type: "jumpscare", jumpscare: "freddy-powerout" };
+    if (randomBetween(0, 100) < 1) return;
+    jumpToJumpscare("freddy-powerout");
   }
-
-  return state;
 };

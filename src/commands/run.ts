@@ -1,4 +1,4 @@
-import { createGame, tick, TICKS_PER_SECOND } from "../logic";
+import { createGame, runTick, TICKS_PER_SECOND } from "../logic/tick";
 import {
   type CameraName,
   type GameplayInput,
@@ -15,7 +15,7 @@ import {
   StringSelectMenuInteraction,
 } from "discord.js";
 import { preloadImages, getImageLink } from "../image-cache";
-import { MAX_POWER, NIGHT_DURATION } from "../logic";
+import { MAX_POWER, NIGHT_DURATION } from "../logic/tick";
 
 type MessageActionRow = ActionRowBuilder<MessageActionRowComponentBuilder>;
 type UpdateCallback = (
@@ -62,7 +62,7 @@ export const runGame = async (
     secondInteraction: ButtonInteraction | StringSelectMenuInteraction | undefined = undefined,
     input: GameplayInput = undefined
   ) => {
-    state = tick(state, input);
+    state = runTick(state, input);
     lastUpdate = Date.now();
     const image = render(state);
     lastImage = image;
@@ -134,7 +134,7 @@ export const runGame = async (
   await update();
   let renderInterval = setInterval(checkForRender, 50);
   let updateInterval = setInterval(() => {
-    state = tick(state, undefined);
+    state = runTick(state, undefined);
     if (state.type === "jumpscare" || state.type === "victory") {
       clearInterval(updateInterval);
     }
