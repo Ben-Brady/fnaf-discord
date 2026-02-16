@@ -1,5 +1,5 @@
-import { NIGHT_DURATION } from "./logic/constants";
-import type { GameplayState } from "./logic/state";
+import { NIGHT_DURATION } from "./fnaf.js";
+import type { GameplayState } from "./fnaf.js";
 
 export const logState = (state: GameplayState) => {
   const { bonnie, chica, foxy, freddy } = state;

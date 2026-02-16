@@ -2,7 +2,7 @@ import type { GameplayInput, GameplayState } from "../state";
 import { createStateRandom } from "./random";
 
 export const applyUserInput = (state: GameplayState, input: GameplayInput) => {
-  const { randint } = createStateRandom(state);
+  const { randomBetween: randint } = createStateRandom(state);
   if (!input) return;
 
   const inCamera = state.view === "camera";

@@ -3,7 +3,7 @@ import { Client, type TextChannel } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 import { chunk, zip } from "lodash";
 
-let imagesLinks: Partial<Record<Image, string>> = {};
+let imagesUrls: Partial<Record<Image, string>> = {};
 
 export const preloadImages = async (client: Client) => {
   let channel = await client.channels.fetch("1290371834390380635");
@@ -13,11 +13,11 @@ export const preloadImages = async (client: Client) => {
 
   try {
     const cache = await readFile(".image-cache", { encoding: "utf-8" });
-    imagesLinks = JSON.parse(cache);
+    imagesUrls = JSON.parse(cache);
     return;
   } catch {}
 
-  const uncachedImages = imageNames.filter((name) => !(name in imagesLinks));
+  const uncachedImages = imageNames.filter((name) => !(name in imagesUrls));
   for (const names of chunk(uncachedImages, 5)) {
     const files = names.map(getImage);
     const message = await channel.send({ files });
@@ -26,16 +26,20 @@ export const preloadImages = async (client: Client) => {
 
     zip(names, attachments).map(([name, attachment]) => {
       if (!name || !attachment) return;
-      imagesLinks[name] = attachment.url;
+      imagesUrls[name] = attachment.url;
     });
   }
 
-  await writeFile(".image-cache", JSON.stringify(imagesLinks), { encoding: "utf-8" });
+  await writeFile(".image-cache", JSON.stringify(imagesUrls), { encoding: "utf-8" });
 };
 
-export const getImageLink = (image: Image): string => {
-  const link = imagesLinks[image];
+export const getImageUrl = (image: Image): string => {
+  const link = imagesUrls[image];
 
   if (!link) throw new Error(`'${image}' not found`);
   return link;
+};
+
+export const getImageUrls = (): string[] => {
+  return Object.values(imagesUrls);
 };

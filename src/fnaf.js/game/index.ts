@@ -1,5 +1,5 @@
 import type { GameplayInput, GameplayState } from "../state";
-import { TOTAL_POWER, NIGHT_DURATION } from "../constants";
+import { NIGHT_DURATION } from "../time";
 import { tickBonnie } from "./bonnie";
 import { tickChica } from "./chica";
 import { tickFoxy } from "./foxy";
@@ -12,7 +12,7 @@ import { applyDifficultyIncreases } from "./difficulites";
 export const runGameTick = (state: GameplayState, input: GameplayInput, dt: number) => {
   state.time += dt;
   if (state.time > NIGHT_DURATION) jumpToVictory();
-  if (state.power > TOTAL_POWER) jumpToPowerout(state);
+  if (state.power < 0) jumpToPowerout(state);
 
   applyDifficultyIncreases(state, dt);
   applyPowerUsage(state, dt);

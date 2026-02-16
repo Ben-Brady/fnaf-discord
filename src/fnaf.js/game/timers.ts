@@ -1,6 +1,10 @@
 import type { GameplayState } from "../state";
 
-export const createInterval = (state: GameplayState, id: string, duration: number) => {
+export const createInterval = (
+  state: { timers: Record<string, number> },
+  id: string,
+  duration: number
+) => {
   if (!(id in state.timers)) {
     state.timers[id] = duration;
   }
@@ -15,7 +19,11 @@ export const createInterval = (state: GameplayState, id: string, duration: numbe
   return { didPass };
 };
 
-export const createTimeout = (state: GameplayState, id: string, duration: number) => {
+export const createTimeout = (
+  state: { timers: Record<string, number> },
+  id: string,
+  duration: number
+) => {
   if (!(id in state.timers)) {
     state.timers[id] = duration;
   }

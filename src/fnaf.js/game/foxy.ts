@@ -21,7 +21,7 @@ export const createFoxy = (difficulty: number): FoxyState => {
 };
 
 export const tickFoxy = (state: GameplayState, dt: number) => {
-  const { randint: randomBetween, movementOpportunity } = createStateRandom(state);
+  const { randomBetween: randomBetween, movementOpportunity } = createStateRandom(state);
   const { foxy } = state;
 
   if (foxy.remaining_lockout > 0) foxy.remaining_lockout -= dt;

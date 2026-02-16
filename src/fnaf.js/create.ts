@@ -1,4 +1,3 @@
-import { TOTAL_POWER } from "./constants";
 import type { GameState, NightNumber } from "./state";
 import { createBonnie } from "./game/bonnie";
 import { createChica } from "./game/chica";
@@ -29,7 +28,7 @@ export const createNight = (options: {
     right_door: false,
     right_light: false,
     timers: {},
-    power: TOTAL_POWER,
+    power: 100,
     time: 0,
     seed: seed,
 

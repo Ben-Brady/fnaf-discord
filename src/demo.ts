@@ -1,10 +1,10 @@
-import { runTick } from "./logic/tick";
+import { runTick } from "./fnaf.js/tick";
 import { getImage, render } from "./render";
 import { sleep } from "bun";
-import type { GameState, GameplayInput, GameplayState } from "./logic/state";
+import type { GameState, GameplayInput, GameplayState } from "./fnaf.js/state";
 import { sample } from "lodash";
 import { logMap, logState } from "./debug";
-import { createNight, createNumberedNight } from "./logic";
+import { createNight, createNumberedNight } from "./fnaf.js";
 
 // let state: GameState = createNumberedNight(5);
 let state: GameState = createNight({ difficulties: { bonnie: 20 } });

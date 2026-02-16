@@ -1,21 +1,24 @@
-import { runTick } from "../logic/tick";
+import { runTick } from "../fnaf.js/tick";
 import {
   type CameraName,
   type GameplayInput,
   type GameplayState,
   type GameState,
-} from "../logic/state";
+  getHour,
+} from "../fnaf.js";
 import { render } from "../render";
+import { preloadImages, getImageUrl, getImageUrls } from "../image-cache";
 import { range } from "lodash";
 import { createButton, createStringSelect } from "discopic";
-import { ActionRowBuilder, CommandInteraction, MessageFlags } from "discord.js";
 import {
   type MessageActionRowComponentBuilder,
   ButtonInteraction,
   StringSelectMenuInteraction,
+  ActionRowBuilder,
+  CommandInteraction,
+  MessageFlags,
 } from "discord.js";
-import { preloadImages, getImageLink } from "../image-cache";
-import { NIGHT_DURATION, TOTAL_POWER } from "../logic/constants";
+import { sleep } from "bun";
 
 type MessageActionRow = ActionRowBuilder<MessageActionRowComponentBuilder>;
 type UpdateCallback = (
@@ -23,17 +26,10 @@ type UpdateCallback = (
   input: GameplayInput
 ) => Promise<void>;
 
-const formatPower = (power: number) => {
-  return `${power.toFixed()}%`;
-};
+const formatPower = (power: number) => `${power.toFixed()}%`;
+const formatTime = (time: number) => getHour(time);
 
-const formatTime = (time: number) => {
-  const hour = Math.floor((time / NIGHT_DURATION) * 6).toFixed();
-  if (hour === "0") return "12PM";
-  return `${hour}AM`;
-};
-
-const chars = (char: string, count: number) =>
+const repeat = (char: string, count: number) =>
   range(count)
     .map(() => char)
     .join("");
@@ -45,7 +41,7 @@ const formatPowerBar = (state: GameplayState) => {
   if (state.view === "camera") powerUsage += 1;
   if (state.left_light || state.right_light) powerUsage += 1;
 
-  return chars("x", powerUsage) + chars("-", 4 - powerUsage);
+  return repeat("x", powerUsage) + repeat("-", 4 - powerUsage);
 };
 
 export const runGame = async (
@@ -54,18 +50,18 @@ export const runGame = async (
   isPrivate: boolean = false
 ) => {
   let lastUpdate = Date.now();
-  let maxTimeBetweenUpdates = 5000;
+  let maxTimeBetweenUpdates = 2500;
   let hasReachedPowerout = false;
 
   const update = async (
-    secondInteraction: ButtonInteraction | StringSelectMenuInteraction | undefined = undefined,
+    userInteraction: ButtonInteraction | StringSelectMenuInteraction | undefined = undefined,
     input: GameplayInput = undefined
   ) => {
-    state = runTick(state, input, 0.05);
+    state = runTick(state, input, 0);
     lastUpdate = Date.now();
     const image = render(state);
     lastImage = image;
-    const imageLink = getImageLink(image);
+    const imageLink = getImageUrl(image);
 
     if (state.type === "jumpscare" || state.type === "victory") {
       await interaction.editReply({ content: imageLink, components: [] });
@@ -92,8 +88,8 @@ export const runGame = async (
     const power_bar = formatPowerBar(state);
     const content = `\`${hour} | ${power_percent} | ${power_bar}\`\n` + imageLink;
 
-    if (secondInteraction) {
-      await secondInteraction.update({
+    if (userInteraction) {
+      await userInteraction.update({
         content: content,
         components: rows,
       });
@@ -110,34 +106,34 @@ export const runGame = async (
     flags: isPrivate ? MessageFlags.Ephemeral : undefined,
   });
   await preloadImages(interaction.client);
+  const urls = getImageUrls();
+  for (let i = 0; i < Math.ceil(urls.length / 4); i++) {
+    const batch = urls.slice(i * 4, i * 4 + 4);
+    await interaction.editReply({
+      content: "Loading (Images)...\n" + batch.join("\n"),
+      components: [],
+    });
+    await sleep(100);
+  }
 
   let lastImage = render(state);
   const checkForRender = async () => {
     const msSinceUpdate = Date.now() - lastUpdate;
 
     let currentImage = render(state);
-
     if (currentImage === lastImage && msSinceUpdate < maxTimeBetweenUpdates) return;
 
-    try {
-      await update();
-    } catch {
-      clearInterval(renderInterval);
-    }
-
-    if (state.type === "victory" || state.type === "jumpscare") {
-      clearInterval(renderInterval);
-    }
+    await update();
   };
 
   await update();
-  let renderInterval = setInterval(checkForRender, 1000 / 20);
   let updateInterval = setInterval(() => {
-    state = runTick(state, undefined, 0.05);
+    state = runTick(state, undefined, 0.0166);
     if (state.type === "jumpscare" || state.type === "victory") {
       clearInterval(updateInterval);
     }
-  }, 50);
+    checkForRender();
+  }, 33);
 };
 
 const createOfficeButton = (
@@ -162,7 +158,7 @@ const createOfficeButton = (
 
   const openCameraButon = createButton(interaction.client, {
     title: "Open Camera",
-    type: "danger",
+    type: "primary",
     onClick: async (interaction) => {
       await update(interaction, { type: "open-camera" });
     },
@@ -185,9 +181,9 @@ const createOfficeButton = (
   });
 
   const components = [
+    openCameraButon,
     leftDoorButton,
     leftLightButton,
-    openCameraButon,
     rightLightButton,
     rightDoorButton,
   ];

@@ -1,7 +1,7 @@
 import { createCommand, attachSlashCommands } from "discopic";
 import { Client } from "discord.js";
 import { runGame } from "./commands/run";
-import { createNight, createNumberedNight } from "./logic";
+import { createNight, createNumberedNight } from "./fnaf.js";
 
 const client = new Client({ intents: ["Guilds", "GuildMessages", "GuildMembers"] });
 

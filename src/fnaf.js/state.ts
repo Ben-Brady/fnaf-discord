@@ -11,16 +11,6 @@ export type JumpscareState = {
   jumpscare: JumpscareType;
 };
 
-export type PoweroutState = {
-  type: "powerout";
-
-  seed: number;
-  time: number;
-  remaining_minimum: number;
-
-  progress: "lights_off" | "freddy" | "blackout";
-};
-
 export type GameplayInput =
   | undefined
   | { type: "left-door" }

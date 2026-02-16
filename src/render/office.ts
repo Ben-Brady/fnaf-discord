@@ -1,5 +1,5 @@
 import type { Image } from "./files";
-import type { GameplayState } from "../logic/state";
+import type { GameplayState } from "../fnaf.js/state";
 
 export const renderOffice = (state: GameplayState): Image => {
   const chica = state.chica.position === "office";

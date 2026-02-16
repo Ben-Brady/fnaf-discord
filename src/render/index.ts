@@ -1,5 +1,5 @@
 import type { Image } from "./files";
-import type { GameplayState, GameState } from "../logic/state";
+import type { GameplayState, GameState } from "../fnaf.js/state";
 import {
   camera_1a,
   camera_1b,
@@ -29,10 +29,10 @@ export const render = (state: GameState): Image => {
 
   if (state.type === "victory") return "victory";
   if (state.type === "powerout") {
-    if (state.progress === "blackout") return "powerout";
-    if (state.progress === "freddy") return "powerout-freddy";
-    if (state.progress === "lights_off") return "powerout-freddy";
-    return assertNever(state.progress);
+    if (state.stage === "blackout") return "powerout";
+    if (state.stage === "freddy") return "powerout-freddy";
+    if (state.stage === "lights_off") return "powerout-freddy";
+    return assertNever(state.stage);
   }
   if (state.view == "office") return renderOffice(state);
 
