@@ -28,7 +28,6 @@ export const createNight = (options: {
     left_light: false,
     right_door: false,
     right_light: false,
-    
     timers: {},
     power: TOTAL_POWER,
     time: 0,
@@ -48,12 +47,12 @@ export const createNight = (options: {
 type NormalNight = 1 | 2 | 3 | 4 | 5 | 6;
 export const createNumberedNight = (night: NormalNight): GameState => {
   const nightDifficulties = {
-    1: { freddy: 0, bonnie: 0, chica: 0, foxy: 0 },
-    2: { freddy: 0, bonnie: 3, chica: 1, foxy: 1 },
-    3: { freddy: 1, bonnie: 0, chica: 5, foxy: 2 },
-    4: { freddy: 2, bonnie: 2, chica: 4, foxy: 6 },
-    5: { freddy: 3, bonnie: 5, chica: 7, foxy: 5 },
-    6: { freddy: 4, bonnie: 10, chica: 12, foxy: 16 },
+    1: { bonnie: 0, chica: 0, foxy: 0, freddy: 0 },
+    2: { bonnie: 3, chica: 1, foxy: 1, freddy: 0 },
+    3: { bonnie: 0, chica: 5, foxy: 2, freddy: 1 },
+    4: { bonnie: 2, chica: 4, foxy: 6, freddy: Math.random() < 0.5 ? 1 : 2 },
+    5: { bonnie: 5, chica: 7, foxy: 5, freddy: 3 },
+    6: { bonnie: 10, chica: 12, foxy: 16, freddy: 4 },
   } satisfies Record<NormalNight, AiLevels>;
 
   let difficulties = nightDifficulties[night];
