@@ -1,7 +1,7 @@
 import { createCommand, attachSlashCommands } from "discopic";
 import { Client } from "discord.js";
 import { runGame } from "./commands/run";
-import { createNight, createNumberedNight } from "./fnaf.js";
+import { createNight, createNumberedNight } from "@nnilky/fnaf.js";
 
 const client = new Client({ intents: ["Guilds", "GuildMessages", "GuildMembers"] });
 
@@ -45,7 +45,7 @@ const gameCommand = createCommand({
   },
   async execute(
     interaction,
-    { bonnie = 0, chica = 0, foxy = 0, freddy = 0, private: isPrivate = false }
+    { bonnie = 0, chica = 0, foxy = 0, freddy = 0, private: isPrivate = false },
   ) {
     let state = createNight({ difficulties: { bonnie, chica, foxy, freddy } });
     runGame(state, interaction, isPrivate);

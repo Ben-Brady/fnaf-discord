@@ -8,6 +8,7 @@
         "dev": "bun --watch src/index.ts"
     },
     "dependencies": {
+        "@nnilky/fnaf.js": "^1.0.0",
         "@types/lodash": "^4.17.23",
         "discopic": "^0.1.1",
         "discord.js": "^14.25.1",

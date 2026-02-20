@@ -1,11 +1,11 @@
 import {
   runTick,
+  getHour,
   type CameraName,
   type GameplayInput,
   type GameplayState,
   type GameState,
-  getHour,
-} from "../fnaf.js";
+} from "@nnilky/fnaf.js";
 import { render } from "../render";
 import { preloadImages, getImageUrl, getImageUrls } from "../image-cache";
 import { range } from "lodash";
@@ -23,7 +23,7 @@ import { sleep } from "bun";
 type MessageActionRow = ActionRowBuilder<MessageActionRowComponentBuilder>;
 type UpdateCallback = (
   interaction: ButtonInteraction | StringSelectMenuInteraction | undefined,
-  input: GameplayInput
+  input: GameplayInput,
 ) => Promise<void>;
 
 const formatPower = (power: number) => `${power.toFixed()}%`;
@@ -47,7 +47,7 @@ const formatPowerBar = (state: GameplayState) => {
 export const runGame = async (
   state: GameState,
   interaction: CommandInteraction,
-  isPrivate: boolean = false
+  isPrivate: boolean = false,
 ) => {
   let lastUpdate = Date.now();
   let maxTimeBetweenUpdates = 2500;
@@ -55,7 +55,7 @@ export const runGame = async (
 
   const update = async (
     userInteraction: ButtonInteraction | StringSelectMenuInteraction | undefined = undefined,
-    input: GameplayInput = undefined
+    input: GameplayInput = undefined,
   ) => {
     state = runTick(state, input, 0);
     lastUpdate = Date.now();
@@ -78,10 +78,9 @@ export const runGame = async (
       return;
     }
 
-    const rows =
-      state.view === "office"
-        ? createOfficeButton(interaction, update)
-        : createCameraButtons(interaction, update, state);
+    const officeButtons = createOfficeButtons(interaction, update);
+    const cameraButtons = createCameraButtons(interaction, update, state);
+    const rows = state.view === "office" ? officeButtons : cameraButtons;
 
     const power_percent = formatPower(state.power);
     const hour = formatTime(state.time);
@@ -136,9 +135,9 @@ export const runGame = async (
   }, 33);
 };
 
-const createOfficeButton = (
+const createOfficeButtons = (
   interaction: CommandInteraction,
-  update: UpdateCallback
+  update: UpdateCallback,
 ): MessageActionRow[] => {
   const leftDoorButton = createButton(interaction.client, {
     title: "Left Door",
@@ -193,7 +192,7 @@ const createOfficeButton = (
 const createCameraButtons = (
   interaction: CommandInteraction,
   update: UpdateCallback,
-  state: GameplayState
+  state: GameplayState,
 ): MessageActionRow[] => {
   const closeCamera = createButton(interaction.client, {
     title: "Close Camera",

@@ -1,5 +1,5 @@
 import type { Image } from "./files";
-import type { GameplayState, GameState } from "../fnaf.js/state";
+import type { GameplayState, GameState } from ".fnaf.js";
 import {
   camera_1a,
   camera_1b,

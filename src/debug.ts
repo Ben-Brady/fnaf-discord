@@ -1,5 +1,5 @@
-import { NIGHT_DURATION } from "./fnaf.js";
-import type { GameplayState } from "./fnaf.js";
+import { NIGHT_DURATION } from "@nnilky/fnaf.js";
+import type { GameplayState } from "@nnilky/fnaf.js";
 
 export const logState = (state: GameplayState) => {
   const { bonnie, chica, foxy, freddy } = state;

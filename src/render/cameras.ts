@@ -1,5 +1,5 @@
 import type { Image } from "./files";
-import type { GameplayState, CameraName } from "../fnaf.js/state";
+import type { GameplayState, CameraName } from "@nnilky/fnaf.js";
 
 export const camera_1a = (state: GameplayState): Image => {
   const { bonnie, chica, freddy } = getAnimatronicOnCamera(state, "1a");
@@ -108,7 +108,7 @@ export const camera_7 = (state: GameplayState): Image => {
 
 const getAnimatronicOnCamera = (
   state: GameplayState,
-  position: CameraName
+  position: CameraName,
 ): { freddy: boolean; chica: boolean; bonnie: boolean } => {
   return {
     bonnie: state.bonnie.position === position,

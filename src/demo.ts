@@ -1,10 +1,9 @@
-import { runTick } from "./fnaf.js/tick";
 import { getImage, render } from "./render";
 import { sleep } from "bun";
-import type { GameState, GameplayInput, GameplayState } from "./fnaf.js/state";
+import { createNight, runTick } from "@nnilky/fnaf.js";
+import type { GameState, GameplayInput, GameplayState } from "@nnilky/fnaf.js";
 import { sample } from "lodash";
 import { logMap, logState } from "./debug";
-import { createNight, createNumberedNight } from "./fnaf.js";
 
 let state: GameState = createNight({ difficulties: { bonnie: 0, chica: 0, foxy: 0, freddy: 20 } });
 
@@ -81,7 +80,7 @@ while (state.type === "gameplay") {
   // logState(state);
 
   // const action: GameplayInput = state.left_door ? undefined : { type: "left-door" };
-  const action = randomAction()
+  const action = randomAction();
   state = runTick(state, action, 0.016);
   await sleep(5);
 }
